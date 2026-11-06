@@ -1,0 +1,25 @@
+## .NET build artifacts
+bin/
+obj/
+**/bin/
+**/obj/
+
+## Visual Studio
+.vs/
+*.user
+*.suo
+
+## Azure Functions local settings (may contain secrets)
+local.settings.json
+
+## Azure Developer CLI / deployment outputs
+.azure/*/
+!.azure/deployment-plan.md
+
+## OS / editor files
+*.swp
+.DS_Store
+Thumbs.db
+
+## Logs
+*.log

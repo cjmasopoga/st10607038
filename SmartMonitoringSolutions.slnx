@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="SmartMonitoringSolutions.csproj" />
+  <Project Path="SmartMonitoringSolutions.Functions\SmartMonitoringSolutions.Functions.csproj" />
+</Solution>

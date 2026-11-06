@@ -1,0 +1,35 @@
+@model IReadOnlyList<(string Name, Uri Uri, DateTimeOffset? LastModified, long Size)>
+@{
+    ViewData["Title"] = "Drone Media";
+}
+
+<h1>Drone Image / Media Upload</h1>
+
+@if (TempData["Message"] is string message)
+{
+    <div class="alert alert-success">@message</div>
+}
+
+<form asp-action="Upload" method="post" enctype="multipart/form-data" class="row g-2 mb-4">
+    <div class="col-auto">
+        <input type="file" name="File" class="form-control" accept="image/*" />
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary">Upload to Blob Storage</button>
+    </div>
+</form>
+<p class="text-muted">Each upload fires the Blob-triggered Azure Function, which logs metadata into Azure Table Storage.</p>
+
+<table class="table table-striped">
+    <thead><tr><th>Name</th><th>Size</th><th>Last Modified</th></tr></thead>
+    <tbody>
+        @foreach (var img in Model)
+        {
+            <tr>
+                <td><a href="@img.Uri" target="_blank">@img.Name</a></td>
+                <td>@(img.Size / 1024) KB</td>
+                <td>@img.LastModified</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,87 @@
+@model SmartMonitoringSolutions.Models.DashboardViewModel
+@{
+    ViewData["Title"] = "Field Dashboard";
+}
+
+<h1>Field Dashboard: @Model.FieldId</h1>
+
+@if (TempData["Message"] is string message)
+{
+    <div class="alert alert-success">@message</div>
+}
+@if (Model.ErrorMessage is not null)
+{
+    <div class="alert alert-warning">@Model.ErrorMessage</div>
+}
+
+<form method="get" class="row g-2 mb-4">
+    <div class="col-auto">
+        <input type="text" name="fieldId" value="@Model.FieldId" class="form-control" placeholder="Field Id" />
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-outline-primary">Load</button>
+    </div>
+</form>
+
+<div class="row">
+    <div class="col-md-7">
+        <h4>Latest Telemetry (via GetTelemetry Function)</h4>
+        <table class="table table-sm table-striped">
+            <thead>
+                <tr><th>Recorded (UTC)</th><th>Device</th><th>Reading</th><th>Value</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var r in Model.Readings)
+                {
+                    <tr>
+                        <td>@r.RecordedAt.ToString("u")</td>
+                        <td>@r.DeviceId</td>
+                        <td>@r.ReadingType</td>
+                        <td>@r.Value @r.Unit</td>
+                    </tr>
+                }
+                @if (!Model.Readings.Any())
+                {
+                    <tr><td colspan="4" class="text-muted">No telemetry yet. Simulate a reading below.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-5">
+        <h4>Simulate Sensor Reading</h4>
+        <form asp-controller="Dashboard" asp-action="Simulate" method="post" class="mb-4">
+            <input type="hidden" name="FieldId" value="@Model.FieldId" />
+            <div class="mb-2">
+                <label class="form-label">Device Id</label>
+                <input name="DeviceId" value="sensor-001" class="form-control" />
+            </div>
+            <div class="mb-2">
+                <label class="form-label">Reading Type</label>
+                <input name="ReadingType" value="SoilMoisture" class="form-control" />
+            </div>
+            <div class="mb-2">
+                <label class="form-label">Value</label>
+                <input name="Value" type="number" step="0.1" value="42.5" class="form-control" />
+            </div>
+            <div class="mb-2">
+                <label class="form-label">Unit</label>
+                <input name="Unit" value="%" class="form-control" />
+            </div>
+            <button type="submit" class="btn btn-secondary">Write to Table Storage</button>
+        </form>
+
+        <h4>Trigger Irrigation</h4>
+        <form asp-controller="Irrigation" asp-action="Trigger" method="post">
+            <input type="hidden" name="FieldId" value="@Model.FieldId" />
+            <div class="mb-2">
+                <label class="form-label">Device Id</label>
+                <input name="DeviceId" value="irrigation-ctrl-01" class="form-control" />
+            </div>
+            <div class="mb-2">
+                <label class="form-label">Reason</label>
+                <input name="Reason" value="Low soil moisture detected" class="form-control" />
+            </div>
+            <button type="submit" class="btn btn-warning">Trigger Irrigation</button>
+        </form>
+    </div>
+</div>
